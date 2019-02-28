@@ -20,7 +20,7 @@ public class SwaggerConfig {
     public Docket apiDocket(){
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.progressivecoder.es"))
+                .apis(RequestHandlerSelectors.basePackage("com.legosoft.agentes.controller"))
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(getApiInfo());
@@ -31,7 +31,7 @@ public class SwaggerConfig {
                 "App to demonstrate Event Sourcing using Axon and Spring Boot",
                 "1.0.0",
                 "Terms of Service",
-                new Contact("Saurabh Dashora", "progressivecoder.com", "coder.progressive@gmail.com"),
+                new Contact("gpalacios", "prueba.com", "gpalaciose@legosoft.com.mx"),
                 "",
                 "",
                 Collections.emptyList());
