@@ -62,6 +62,7 @@ public class AmqpEventPublicationConfig {
     @Bean
     @Required
     public RabbitAdmin rabbitAdmin() {
+
         RabbitAdmin admin = new RabbitAdmin(connectionFactory());
         admin.setAutoStartup(true);
         admin.declareExchange(exchange());

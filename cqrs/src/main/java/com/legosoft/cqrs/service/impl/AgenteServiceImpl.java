@@ -1,0 +1,42 @@
+package com.legosoft.cqrs.service.impl;
+
+import com.legosoft.cqrs.eventsourcing.command.agente.CreateAgenteCommand;
+import com.legosoft.cqrs.models.Agente;
+import com.legosoft.cqrs.repository.AgenteRepository;
+import com.legosoft.cqrs.service.AgenteService;
+import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
+@Service("agenteService")
+public class AgenteServiceImpl implements AgenteService {
+
+    private CommandGateway commandGateway ;
+
+    public AgenteServiceImpl(CommandGateway commandGateway){
+        this.commandGateway = commandGateway;
+    }
+
+//    @Autowired
+//    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private AgenteRepository agenteRepository;
+
+    public CompletableFuture<String> createCommandAgente(Agente agente){
+        String id = UUID.randomUUID().toString();
+        agente.setIdAgenteEvent(id);
+        CreateAgenteCommand agenteCommand = new CreateAgenteCommand(agente.getIdAgenteEvent(), agente.getNombreAgente(), agente.getFechaCracion(), agente.isActivo());
+        agente.setIdAgente(null);
+        saveAgente(agente);
+//        rabbitTemplate.convertAndSend("agente_usuario","agente_usuario", new Gson().toJson(new MessageColas("Agente Creado para el alfons", " gpalacios@legosoft.com.mx", agente)));
+        return commandGateway.send(agenteCommand);
+    }
+
+    public Agente saveAgente(Agente agente){
+        return agenteRepository.save(agente);
+    }
+}
