@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.legosoft.cqrs.enums.GrupoEmpresarialEstatus;
 import com.legosoft.cqrs.models.Agente;
 import com.legosoft.cqrs.models.GrupoEmpresarial;
 import com.legosoft.cqrs.models.Usuario;
@@ -12,9 +13,11 @@ import com.legosoft.cqrs.service.AgenteService;
 import com.legosoft.cqrs.service.GrupoEmpresarialService;
 import com.legosoft.cqrs.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ReceiverUsuario {
 
@@ -22,6 +25,8 @@ public class ReceiverUsuario {
     private ObjectMapper objectMapper;
 
     Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+    SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 
     @Autowired
     private AgenteService agenteService;
@@ -50,9 +55,28 @@ public class ReceiverUsuario {
     public void saveEvent(String tipo, String mensaje) throws IOException {
         objectMapper = new ObjectMapper();
 
+        JsonParser jsonParser = new JsonParser();
+        JsonObject jsonObject = (JsonObject) jsonParser.parse(mensaje);
+
+        String nombreUsuario = String.valueOf(jsonObject.get("nombreUsuario"));
+        String idEvent = String.valueOf(jsonObject.get("id"));
+        String nombreGrupo = String.valueOf(jsonObject.get("nombreGrupo"));
+        Date fecha = null;
+        try {
+            fecha = dt.parse(String.valueOf(jsonObject.get("fechaCreacion")));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String estatus =String.valueOf(jsonObject.get("estatus"));
+
         switch (tipo){
             case "grupo":
-                GrupoEmpresarial grupo =  gson.fromJson(mensaje, GrupoEmpresarial.class);
+                GrupoEmpresarial grupo =  new GrupoEmpresarial();
+                grupo.setIdEvent(idEvent);
+                grupo.setNombreGrupo(nombreGrupo);
+                grupo.setFechaCreacion(fecha);
+                grupo.setEstatus(estatus.equals("PENDIENTE") ? GrupoEmpresarialEstatus.PENDIENTE : GrupoEmpresarialEstatus.COMPLETO);
+                grupo.setUsuario(usuarioService.findUsuarioByNombre(nombreUsuario.replaceAll("\"", "")));
                 grupoEmpresarialService.createCommandGrupo(grupo);
                 break;
             case "Usuario":

@@ -8,4 +8,11 @@ public interface UsuarioService {
 
     public CompletableFuture<String> createCommandUsuario(Usuario usuario);
 
+    /**
+     * Servicio que busca un usuario por nombre
+     * @param nombreUsuario
+     * @return
+     */
+    public Usuario findUsuarioByNombre(String nombreUsuario);
+
 }

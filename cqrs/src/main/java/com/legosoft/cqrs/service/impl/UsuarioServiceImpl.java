@@ -37,4 +37,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario saveUsuario(Usuario usuario){
         return  usuarioRepository.save(usuario);
     }
+
+    public Usuario findUsuarioByNombre(String nombreUsuario){
+        return usuarioRepository.findByNombreUsuario(nombreUsuario);
+    }
 }
