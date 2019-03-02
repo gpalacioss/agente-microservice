@@ -15,7 +15,7 @@ public class AgenteCreatedEvent {
 
     private String nombreAgente;
 
-    private Date fechaCracion;
+    private Date fechaCreacion;
 
     private boolean activo;
 

@@ -11,7 +11,9 @@ public class AgenteDto {
 
     private String nombreAgente;
 
-    private Date fechaCracion;
+    private Date fechaCreacion;
 
     private boolean activo;
+
+
 }

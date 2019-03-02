@@ -36,7 +36,7 @@ public class Agente {
     private String nombreAgente;
 
     @Column(name = "FECHA_CREACION")
-    private Date fechaCracion;
+    private Date fechaCreacion;
 
     @Column(name = "ACTIVO")
     private boolean activo;
@@ -45,14 +45,16 @@ public class Agente {
     public Agente(CreateAgenteCommand createAgenteCommand) {
         log.info("Estamos en el generar Comando");
         Assert.hasLength(createAgenteCommand.getIdAgenteEvent(), "El id no debe de estar nula o vacia");
-        AggregateLifecycle.apply(new AgenteCreatedEvent(createAgenteCommand.getIdAgenteEvent(), createAgenteCommand.getNombreAgente(), createAgenteCommand.getFechaCracion(), createAgenteCommand.isActivo()));
+        AggregateLifecycle.apply(new AgenteCreatedEvent(createAgenteCommand.getIdAgenteEvent(), createAgenteCommand.getNombreAgente(), createAgenteCommand.getFechaCreacion(), createAgenteCommand.isActivo()));
     }
 
     @EventSourcingHandler
     public void on(AgenteCreatedEvent agenteCreatedEvent){
         this.idAgenteEvent = agenteCreatedEvent.getIdAgenteEvent();
         this.nombreAgente = agenteCreatedEvent.getNombreAgente();
-        this.fechaCracion = agenteCreatedEvent.getFechaCracion();
+        this.fechaCreacion = agenteCreatedEvent.getFechaCreacion();
         this.activo = agenteCreatedEvent.isActivo();
+        log.info("genero el evento:: " + agenteCreatedEvent.getNombreAgente());
+        log.info("genero el evento:: " + agenteCreatedEvent.getFechaCreacion());
     }
 }
