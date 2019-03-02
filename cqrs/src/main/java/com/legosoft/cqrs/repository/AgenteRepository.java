@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AgenteRepository extends Neo4jRepository<Agente, Long> {
 
+    Agente findByNombreAgente(String nombreAgente);
+
 }

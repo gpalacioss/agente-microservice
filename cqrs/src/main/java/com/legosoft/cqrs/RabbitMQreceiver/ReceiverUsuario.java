@@ -53,7 +53,25 @@ public class ReceiverUsuario {
     }
 
     public void saveEvent(String tipo, String mensaje) throws IOException {
-        objectMapper = new ObjectMapper();
+
+        switch (tipo){
+            case "grupo":
+                GrupoEmpresarial grupo = generaEmpresa(mensaje);
+                grupoEmpresarialService.createCommandGrupo(grupo);
+                break;
+            case "Usuario":
+                Usuario usuario = gson.fromJson(mensaje, Usuario.class);
+                System.out.println(usuario.getNombreCompleto());
+                usuarioService.createCommandUsuario(usuario);
+                break;
+            case "agente":
+                Agente agente = gson.fromJson(mensaje, Agente.class);
+                agenteService.createCommandAgente(agente);
+                break;
+        }
+    }
+
+    private GrupoEmpresarial generaEmpresa(String mensaje){
 
         JsonParser jsonParser = new JsonParser();
         JsonObject jsonObject = (JsonObject) jsonParser.parse(mensaje);
@@ -69,26 +87,68 @@ public class ReceiverUsuario {
         }
         String estatus =String.valueOf(jsonObject.get("estatus"));
 
-        switch (tipo){
-            case "grupo":
-                GrupoEmpresarial grupo =  new GrupoEmpresarial();
-                grupo.setIdEvent(idEvent);
-                grupo.setNombreGrupo(nombreGrupo);
-                grupo.setFechaCreacion(fecha);
-                grupo.setEstatus(estatus.equals("PENDIENTE") ? GrupoEmpresarialEstatus.PENDIENTE : GrupoEmpresarialEstatus.COMPLETO);
-                grupo.setUsuario(usuarioService.findUsuarioByNombre(nombreUsuario.replaceAll("\"", "")));
-                grupoEmpresarialService.createCommandGrupo(grupo);
-                break;
-            case "Usuario":
-                Usuario usuario = gson.fromJson(mensaje, Usuario.class);
-                System.out.println(usuario.getNombreCompleto());
-                usuarioService.createCommandUsuario(usuario);
-                break;
-            case "agente":
-                Agente agente = gson.fromJson(mensaje, Agente.class);
-                agenteService.createCommandAgente(agente);
-                break;
+        GrupoEmpresarial grupo =  new GrupoEmpresarial();
+        grupo.setIdEvent(idEvent);
+        grupo.setNombreGrupo(nombreGrupo);
+        grupo.setFechaCreacion(fecha);
+        grupo.setEstatus(estatus.equals("PENDIENTE") ? GrupoEmpresarialEstatus.PENDIENTE : GrupoEmpresarialEstatus.COMPLETO);
+        grupo.setUsuario(usuarioService.findUsuarioByNombre(nombreUsuario.replaceAll("\"", "")));
+
+        return grupo;
+    }
+
+    private Usuario generaUsuario(String mensaje){
+
+        Usuario usuario = new Usuario();
+
+        JsonParser jsonParser = new JsonParser();
+        JsonObject jsonObject = (JsonObject) jsonParser.parse(mensaje);
+
+        Long id = Long.valueOf(String.valueOf(jsonObject.get("id")));
+        String idEvent = String.valueOf(jsonObject.get("idEvent"));
+        String nombreUsuario = String.valueOf(jsonObject.get("idEvent"));
+        String nombreCompleto = String.valueOf(jsonObject.get("nombreCompleto"));
+        String email = String.valueOf(jsonObject.get("email"));
+        String password = String.valueOf(jsonObject.get("password"));
+        boolean administrador = Boolean.parseBoolean(String.valueOf(jsonObject.get("administrador")));
+        boolean activo = Boolean.parseBoolean(String.valueOf(jsonObject.get("activo")));
+
+        usuario.setNombreUsuario(nombreUsuario);
+        usuario.setNombreCompleto(nombreCompleto);
+        usuario.setEmail(email);
+        usuario.setPassword(password);
+        usuario.setAdministrador(administrador);
+        usuario.setActivo(activo);
+        usuario.getAgentes().add(generaAgente(mensaje));
+        return usuario;
+    }
+
+    private Agente generaAgente(String mensaje){
+
+        JsonParser jsonParser = new JsonParser();
+        JsonObject jsonObject = (JsonObject) jsonParser.parse(mensaje);
+
+        Long idAgente = Long.valueOf(String.valueOf(jsonObject.get("id")));
+        String idAgenteEvent = String.valueOf(jsonObject.get("id"));
+        String nombreAgente = String.valueOf(jsonObject.get("id"));
+        Date fechaCracion = new Date(Long.valueOf(String.valueOf(jsonObject.get("id"))));
+        boolean activo = Boolean.parseBoolean(String.valueOf(jsonObject.get("id")));
+
+        Agente agente = agenteService.findAgenteByNombreAgente(nombreAgente);
+
+
+        if (agente == null){
+
+            agente = new Agente();
+            agente.setNombreAgente(nombreAgente);
+            agente.setFechaCracion(fechaCracion);
+            agente.setActivo(activo);
+
+            agente = agenteService.createCommandAgente(agente);
+
         }
+
+        return  agente;
     }
 
 }

@@ -13,8 +13,11 @@ import org.axonframework.spring.stereotype.Aggregate;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Relationship;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @NodeEntity(label = "Usuario")
 @Aggregate
@@ -41,6 +44,9 @@ public class Usuario implements Serializable {
     private boolean administrador;
 
     private boolean activo;
+
+    @Relationship(type = "MEMBER_OF")
+    private Set<Agente> agentes = new HashSet<>();
 
     @CommandHandler
     public Usuario(CreateUsuarioCommand createUsuarioCommand){

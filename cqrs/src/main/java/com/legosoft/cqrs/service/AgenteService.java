@@ -11,5 +11,7 @@ public interface AgenteService {
      * @param agente
      * @return
      */
-    public CompletableFuture<String> createCommandAgente(Agente agente);
+    public Agente createCommandAgente(Agente agente);
+
+    public Agente findAgenteByNombreAgente(String nombreAgente);
 }

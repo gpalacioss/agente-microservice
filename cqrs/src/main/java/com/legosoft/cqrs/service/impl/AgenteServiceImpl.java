@@ -26,17 +26,22 @@ public class AgenteServiceImpl implements AgenteService {
     @Autowired
     private AgenteRepository agenteRepository;
 
-    public CompletableFuture<String> createCommandAgente(Agente agente){
+    public Agente createCommandAgente(Agente agente){
         String id = UUID.randomUUID().toString();
         agente.setIdAgenteEvent(id);
         CreateAgenteCommand agenteCommand = new CreateAgenteCommand(agente.getIdAgenteEvent(), agente.getNombreAgente(), agente.getFechaCracion(), agente.isActivo());
         agente.setIdAgente(null);
-        saveAgente(agente);
+       Agente newAgente =  saveAgente(agente);
 //        rabbitTemplate.convertAndSend("agente_usuario","agente_usuario", new Gson().toJson(new MessageColas("Agente Creado para el alfons", " gpalacios@legosoft.com.mx", agente)));
-        return commandGateway.send(agenteCommand);
+        commandGateway.send(agenteCommand);
+        return newAgente;
     }
 
     public Agente saveAgente(Agente agente){
         return agenteRepository.save(agente);
+    }
+
+    public Agente findAgenteByNombreAgente(String nombreAgente){
+        return agenteRepository.findByNombreAgente(nombreAgente);
     }
 }
