@@ -27,7 +27,7 @@ public class MysqlConfig {
     public DataSource dataSource(){
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://192.168.20.109:3600/agentes");
+        dataSource.setUrl("jdbc:mysql://192.168.1.66:3600/agentes");
 //        dataSource.setUrl("jdbc:mysql://localhost:3600/agentes");
         dataSource.setUsername("root");
         dataSource.setPassword("admin");

@@ -36,7 +36,8 @@ public class AgenteServiceImpl implements AgenteService {
         agente.setIdAgenteEvent(id);
         CreateAgenteCommand agenteCommand = new CreateAgenteCommand(agente.getIdAgenteEvent(), agente.getNombreAgente(), agente.getFechaCreacion(), agente.isActivo());
 
-        rabbitTemplate.convertAndSend("agente_usuario","agente_usuario", new Gson().toJson(agente));
+//        rabbitTemplate.convertAndSend("agente_usuario","agente_usuario", new Gson().toJson(agente));
+        rabbitTemplate.convertAndSend("usuarioCQRS","usuarioCQRS", new Gson().toJson(agente));
         return commandGateway.send(agenteCommand);
     }
 

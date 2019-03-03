@@ -41,6 +41,9 @@ public class Agente {
     @Column(name = "ACTIVO")
     private boolean activo;
 
+    @Transient
+    private String tipo = "agente";
+
     @CommandHandler
     public Agente(CreateAgenteCommand createAgenteCommand) {
         log.info("Estamos en el generar Comando");
