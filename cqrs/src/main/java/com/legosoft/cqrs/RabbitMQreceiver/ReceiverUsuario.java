@@ -60,7 +60,7 @@ public class ReceiverUsuario {
                 grupoEmpresarialService.createCommandGrupo(grupo);
                 break;
             case "Usuario":
-                Usuario usuario = gson.fromJson(mensaje, Usuario.class);
+                Usuario usuario = generaUsuario(mensaje);
                 System.out.println(usuario.getNombreCompleto());
                 usuarioService.createCommandUsuario(usuario);
                 break;
@@ -113,42 +113,16 @@ public class ReceiverUsuario {
         boolean administrador = Boolean.parseBoolean(String.valueOf(jsonObject.get("administrador")));
         boolean activo = Boolean.parseBoolean(String.valueOf(jsonObject.get("activo")));
 
+        String nombreAgente = String.valueOf(jsonObject.get("nombreAgente"));
+
         usuario.setNombreUsuario(nombreUsuario);
         usuario.setNombreCompleto(nombreCompleto);
         usuario.setEmail(email);
         usuario.setPassword(password);
         usuario.setAdministrador(administrador);
         usuario.setActivo(activo);
-        usuario.getAgentes().add(generaAgente(mensaje));
+        usuario.getAgentes().add(agenteService.findAgenteByNombreAgente(nombreAgente));
         return usuario;
-    }
-
-    private Agente generaAgente(String mensaje){
-
-        JsonParser jsonParser = new JsonParser();
-        JsonObject jsonObject = (JsonObject) jsonParser.parse(mensaje);
-
-        Long idAgente = Long.valueOf(String.valueOf(jsonObject.get("id")));
-        String idAgenteEvent = String.valueOf(jsonObject.get("id"));
-        String nombreAgente = String.valueOf(jsonObject.get("id"));
-        Date fechaCracion = new Date(Long.valueOf(String.valueOf(jsonObject.get("id"))));
-        boolean activo = Boolean.parseBoolean(String.valueOf(jsonObject.get("id")));
-
-        Agente agente = agenteService.findAgenteByNombreAgente(nombreAgente);
-
-
-        if (agente == null){
-
-            agente = new Agente();
-            agente.setNombreAgente(nombreAgente);
-            agente.setFechaCracion(fechaCracion);
-            agente.setActivo(activo);
-
-            agente = agenteService.createCommandAgente(agente);
-
-        }
-
-        return  agente;
     }
 
 }
