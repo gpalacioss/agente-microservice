@@ -1,13 +1,15 @@
-package com.legosoft.agentes.dtos;
+package com.legosoft.agentes.eventsourcing.event.agente;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
-@Getter
+
 @Setter
-public class AgenteDto {
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class AssociatedAgenteUsuarioEvent {
 
     private Long idAgente;
 

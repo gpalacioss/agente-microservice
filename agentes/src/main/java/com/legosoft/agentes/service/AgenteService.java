@@ -9,6 +9,9 @@ public interface AgenteService {
 
     public CompletableFuture<String> createCommandAgente(Agente agente);
 
+
+    public CompletableFuture<String> updateCommandRelacionUsarioAgente(Agente agente);
+
     /**
      *
      * Servicio que consulta a un agente por su id
@@ -35,4 +38,11 @@ public interface AgenteService {
      * @param agente
      */
     public void deleteAgente(Agente agente);
+
+    /**
+     * Servicio que busca un agente por nombre
+     */
+    public Agente findAgenteByNombre(String nombreAgente);
+
+    public void EnviaColaGrupo(String nombreGrupo, String nombreUsuario, String nombreAgente);
 }

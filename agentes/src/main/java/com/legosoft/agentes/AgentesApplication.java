@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 
-//@EnableAutoConfiguration(exclude = AxonAutoConfiguration.class)
-@EnableAutoConfiguration(exclude={AxonAutoConfiguration.class, AMQPAutoConfiguration.class})
+@EnableAutoConfiguration(exclude = AMQPAutoConfiguration.class)
+//@EnableAutoConfiguration(exclude={AxonAutoConfiguration.class, AMQPAutoConfiguration.class})
 @SpringBootApplication
 @EnableEurekaClient
 public class AgentesApplication {

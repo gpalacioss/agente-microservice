@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -31,7 +32,16 @@ public class AgenteController {
     public void createCommandAgente(@RequestBody AgenteDto agente){
         Agente ag = new Agente();
         BeanUtils.copyProperties(agente, ag);
+        ag.setFechaCreacion(new Date());
+        ag.setEstatus("PENDIENTE_ASIGNAR_USUARIO");
         agenteService.createCommandAgente(ag);
+    }
+
+    @PostMapping("/updateAgenteCommand")
+    public void updateCommandAgente(@RequestBody AgenteDto agente){
+        Agente ag = new Agente();
+        BeanUtils.copyProperties(agente, ag);
+        agenteService.updateCommandRelacionUsarioAgente(ag);
     }
 
     @PostMapping("/saveAgente")

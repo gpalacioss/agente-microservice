@@ -1,19 +1,18 @@
 package com.legosoft.agentes.eventsourcing.command.agente;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.axonframework.commandhandling.TargetAggregateIdentifier;
 
 import java.util.Date;
 
-@Data
-@NoArgsConstructor
+@Setter
+@Getter
 @AllArgsConstructor
-public class CreateAgenteCommand {
+@NoArgsConstructor
+public class AsociarAgenteUsuarioCommand {
 
     @TargetAggregateIdentifier
-    private Long idAgente;
+    private Long idEvent;
 
     private String nombreAgente;
 
