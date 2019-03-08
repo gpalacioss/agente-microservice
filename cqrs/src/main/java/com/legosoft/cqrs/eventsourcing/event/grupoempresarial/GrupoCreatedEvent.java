@@ -12,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class GrupoCreatedEvent {
 
-    private String idEvent;
+    private Long id;
 
     private String nombreGrupo;
 

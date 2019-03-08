@@ -13,7 +13,7 @@ import java.util.Date;
 public class CreateAgenteCommand {
 
     @TargetAggregateIdentifier
-    private String idAgenteEvent;
+    private Long idAgente;
 
     private String nombreAgente;
 

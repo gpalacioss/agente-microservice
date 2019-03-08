@@ -19,6 +19,8 @@ import org.neo4j.ogm.annotation.typeconversion.EnumString;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @NodeEntity(label = "GrupoEmpresarial")
 @Aggregate
@@ -29,10 +31,8 @@ public class GrupoEmpresarial implements Serializable {
 
     @Id
     @GeneratedValue
-    private Long id;
-
     @AggregateIdentifier
-    private String idEvent;
+    private Long id;
 
     private String nombreGrupo;
 
@@ -43,15 +43,18 @@ public class GrupoEmpresarial implements Serializable {
     @Relationship(type = "ADMINISTRA", direction = Relationship.INCOMING)
     private Usuario usuario;
 
+    @Relationship(type = "ALLOW", direction = Relationship.INCOMING)
+    private Set<Agente> agentes = new HashSet<>();
+
 
     @CommandHandler
     public GrupoEmpresarial(CreateGrupoCommand createGrupoCommand){
-        AggregateLifecycle.apply(new GrupoCreatedEvent(createGrupoCommand.getIdEvent(), createGrupoCommand.getNombreGrupo(), createGrupoCommand.getFechaCreacion(), createGrupoCommand.getEstatus()));
+        AggregateLifecycle.apply(new GrupoCreatedEvent(createGrupoCommand.getId(), createGrupoCommand.getNombreGrupo(), createGrupoCommand.getFechaCreacion(), createGrupoCommand.getEstatus()));
     }
 
     @EventSourcingHandler
     public void on(GrupoCreatedEvent grupoCreatedEvent){
-        this.idEvent = grupoCreatedEvent.getIdEvent();
+        this.id = grupoCreatedEvent.getId();
         this.nombreGrupo = grupoCreatedEvent.getNombreGrupo();
         this.fechaCreacion = grupoCreatedEvent.getFechaCreacion();
         this.estatus = grupoCreatedEvent.getEstatus();

@@ -13,8 +13,6 @@ public class GrupoEmpresarialDto implements Serializable {
 
     private Long id;
 
-    private String idEvent;
-
     private String nombreGrupo;
 
     private Date fechaCreacion;

@@ -6,12 +6,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.legosoft.cqrs.enums.GrupoEmpresarialEstatus;
-import com.legosoft.cqrs.models.Agente;
-import com.legosoft.cqrs.models.GrupoEmpresarial;
-import com.legosoft.cqrs.models.Usuario;
-import com.legosoft.cqrs.service.AgenteService;
-import com.legosoft.cqrs.service.GrupoEmpresarialService;
-import com.legosoft.cqrs.service.UsuarioService;
+import com.legosoft.cqrs.models.*;
+import com.legosoft.cqrs.service.*;
+import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -37,6 +34,15 @@ public class ReceiverUsuario {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Autowired
+    private PermisoService permisoService;
+
+    @Autowired
+    private PerfilService perfilService;
+
+    @Autowired
+    private RolService rolService;
+
     public void receiveMessageUsuario(String message) {
 
 
@@ -56,17 +62,31 @@ public class ReceiverUsuario {
 
         switch (tipo){
             case "grupo":
-                GrupoEmpresarial grupo = generaEmpresa(mensaje);
-                grupoEmpresarialService.createCommandGrupo(grupo);
+//                GrupoEmpresarial grupo = generaEmpresa(mensaje);
+                GrupoEmpresarial grupoEmpresarial = gson.fromJson(mensaje, GrupoEmpresarial.class);
+                grupoEmpresarialService.createCommandGrupo(grupoEmpresarial);
                 break;
             case "Usuario":
-                Usuario usuario = generaUsuario(mensaje);
+//                Usuario usuario = generaUsuario(mensaje);
+                Usuario usuario = gson.fromJson(mensaje, Usuario.class);
                 System.out.println(usuario.getNombreCompleto());
                 usuarioService.createCommandUsuario(usuario);
                 break;
             case "agente":
                 Agente agente = gson.fromJson(mensaje, Agente.class);
                 agenteService.createCommandAgente(agente);
+                break;
+            case "permiso":
+                Permiso permiso = gson.fromJson(mensaje, Permiso.class);
+                permisoService.createCommandPermiso(permiso);
+                break;
+            case "perfil":
+                Perfil perfil = gson.fromJson(mensaje, Perfil.class);
+                perfilService.createCommandPerfil(perfil);
+                break;
+            case "rol":
+                Rol rol = gson.fromJson(mensaje, Rol.class);
+                rolService.createCommandRol(rol);
                 break;
         }
     }
@@ -77,7 +97,7 @@ public class ReceiverUsuario {
         JsonObject jsonObject = (JsonObject) jsonParser.parse(mensaje);
 
         String nombreUsuario = String.valueOf(jsonObject.get("nombreUsuario"));
-        String idEvent = String.valueOf(jsonObject.get("id"));
+        Long id = Long.valueOf(String.valueOf(jsonObject.get("id")));
         String nombreGrupo = String.valueOf(jsonObject.get("nombreGrupo"));
         Date fecha = null;
         try {
@@ -88,8 +108,8 @@ public class ReceiverUsuario {
         String estatus =String.valueOf(jsonObject.get("estatus"));
 
         GrupoEmpresarial grupo =  new GrupoEmpresarial();
-        grupo.setIdEvent(idEvent);
-        grupo.setNombreGrupo(nombreGrupo);
+        grupo.setId(id);
+        grupo.setNombreGrupo(nombreGrupo.replaceAll("\"", ""));
         grupo.setFechaCreacion(fecha);
         grupo.setEstatus(estatus.equals("PENDIENTE") ? GrupoEmpresarialEstatus.PENDIENTE : GrupoEmpresarialEstatus.COMPLETO);
         grupo.setUsuario(usuarioService.findUsuarioByNombre(nombreUsuario.replaceAll("\"", "")));
@@ -99,30 +119,14 @@ public class ReceiverUsuario {
 
     private Usuario generaUsuario(String mensaje){
 
-        Usuario usuario = new Usuario();
-
-        JsonParser jsonParser = new JsonParser();
-        JsonObject jsonObject = (JsonObject) jsonParser.parse(mensaje);
-
-        Long id = Long.valueOf(String.valueOf(jsonObject.get("id")));
-        String idEvent = String.valueOf(jsonObject.get("idEvent"));
-        String nombreUsuario = String.valueOf(jsonObject.get("idEvent"));
-        String nombreCompleto = String.valueOf(jsonObject.get("nombreCompleto"));
-        String email = String.valueOf(jsonObject.get("email"));
-        String password = String.valueOf(jsonObject.get("password"));
-        boolean administrador = Boolean.parseBoolean(String.valueOf(jsonObject.get("administrador")));
-        boolean activo = Boolean.parseBoolean(String.valueOf(jsonObject.get("activo")));
-
-        String nombreAgente = String.valueOf(jsonObject.get("nombreAgente"));
-
-        usuario.setNombreUsuario(nombreUsuario);
-        usuario.setNombreCompleto(nombreCompleto);
-        usuario.setEmail(email);
-        usuario.setPassword(password);
-        usuario.setAdministrador(administrador);
-        usuario.setActivo(activo);
-        usuario.getAgentes().add(agenteService.findAgenteByNombreAgente(nombreAgente));
+        Usuario usuario = gson.fromJson(mensaje, Usuario.class);
+        System.out.println(usuario.getAgentes().stream().findFirst().get().getNombreAgente());
+        //TODO: esto se hace por que la cola de agente a cqrs o esta funcionando y se tiene que guardar aqui cuando envien el agente del servico de usuario, cuando funcione la cola eliminar y hacer solo la busqueda por nombre
+//        Agente ag = agenteService.createCommandAgente(usuario.getAgentes().stream().findFirst().get());
+//        usuario.setNombreUsuario(usuario.getNombreUsuario().replaceAll("\"", ""));
+        usuario.getAgentes().add(agenteService.findAgenteByNombreAgente(usuario.getAgentes().stream().findFirst().get().getNombreAgente()));
         return usuario;
+
     }
 
 }

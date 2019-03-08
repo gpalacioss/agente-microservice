@@ -11,8 +11,6 @@ public class UsuarioDto implements Serializable {
 
     private Long id;
 
-    private String idEvent;
-
     private String nombreUsuario;
 
     private String nombreCompleto;

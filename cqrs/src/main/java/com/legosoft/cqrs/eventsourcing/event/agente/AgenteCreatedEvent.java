@@ -11,7 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class AgenteCreatedEvent {
 
-    private String idAgenteEvent;
+    private Long idAgente;
 
     private String nombreAgente;
 

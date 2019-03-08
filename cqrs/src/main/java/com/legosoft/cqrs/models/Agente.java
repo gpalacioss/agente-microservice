@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Slf4j
-@NodeEntity(value = "Agente")
 @Aggregate
+@NodeEntity(value = "Agente")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,10 +29,8 @@ public class Agente implements Serializable {
 
     @Id
     @GeneratedValue
-    private Long idAgente;
-
     @AggregateIdentifier
-    private String idAgenteEvent;
+    private Long idAgente;
 
     private String nombreAgente;
 
@@ -43,13 +41,13 @@ public class Agente implements Serializable {
     @CommandHandler
     public Agente(CreateAgenteCommand createAgenteCommand) {
         log.info("Estamos en el generar Comando");
-        Assert.hasLength(createAgenteCommand.getIdAgenteEvent(), "El id no debe de estar nula o vacia");
-        AggregateLifecycle.apply(new AgenteCreatedEvent(createAgenteCommand.getIdAgenteEvent(), createAgenteCommand.getNombreAgente(), createAgenteCommand.getFechaCracion(), createAgenteCommand.isActivo()));
+        Assert.hasLength(createAgenteCommand.getIdAgente().toString(), "El id no debe de estar nula o vacia");
+        AggregateLifecycle.apply(new AgenteCreatedEvent(createAgenteCommand.getIdAgente(), createAgenteCommand.getNombreAgente(), createAgenteCommand.getFechaCracion(), createAgenteCommand.isActivo()));
     }
 
     @EventSourcingHandler
     public void on(AgenteCreatedEvent agenteCreatedEvent){
-        this.idAgenteEvent = agenteCreatedEvent.getIdAgenteEvent();
+        this.idAgente = agenteCreatedEvent.getIdAgente();
         this.nombreAgente = agenteCreatedEvent.getNombreAgente();
         this.fechaCracion = agenteCreatedEvent.getFechaCracion();
         this.activo = agenteCreatedEvent.isActivo();

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UsuarioCreatedEvent {
 
-    private String idEvent;
+    private Long id;
 
     private String nombreUsuario;
 

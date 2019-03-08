@@ -28,10 +28,8 @@ public class Usuario implements Serializable {
 
     @Id
     @GeneratedValue
-    private Long id;
-
     @AggregateIdentifier
-    private String idEvent;
+    private Long id;
 
     private String nombreUsuario;
 
@@ -45,19 +43,22 @@ public class Usuario implements Serializable {
 
     private boolean activo;
 
-    @Relationship(type = "MEMBER_OF")
+    @Relationship(type = "ADMINISTRA")
     private Set<Agente> agentes = new HashSet<>();
+
+    @Relationship(type = "HAS_PERFIL")
+    private Set<Perfil> perfiles = new HashSet<>();
 
     @CommandHandler
     public Usuario(CreateUsuarioCommand createUsuarioCommand){
-        AggregateLifecycle.apply(new UsuarioCreatedEvent(createUsuarioCommand.getIdEvent(), createUsuarioCommand.getNombreUsuario(), createUsuarioCommand.getNombreCompleto(),
+        AggregateLifecycle.apply(new UsuarioCreatedEvent(createUsuarioCommand.getId(), createUsuarioCommand.getNombreUsuario(), createUsuarioCommand.getNombreCompleto(),
                 createUsuarioCommand.getEmail(), createUsuarioCommand.getPassword(), createUsuarioCommand.isAdministrador(), createUsuarioCommand.isActivo()));
     }
 
     @EventSourcingHandler
     public void on(UsuarioCreatedEvent usuarioCreatedEvent){
 
-        this.idEvent = usuarioCreatedEvent.getIdEvent();
+        this.id = usuarioCreatedEvent.getId();
         this.nombreUsuario = usuarioCreatedEvent.getNombreUsuario();
         this.nombreCompleto = usuarioCreatedEvent.getNombreCompleto();
         this.email = usuarioCreatedEvent.getEmail();

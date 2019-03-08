@@ -14,7 +14,7 @@ import java.util.Date;
 public class CreateGrupoCommand {
 
     @TargetAggregateIdentifier
-    private String idEvent;
+    private Long id;
 
     private String nombreGrupo;
 

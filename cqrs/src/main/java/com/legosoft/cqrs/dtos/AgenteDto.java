@@ -12,8 +12,6 @@ public class AgenteDto implements Serializable {
 
     private Long idAgente;
 
-    private String idAgenteEvent;
-
     private String nombreAgente;
 
     private Date fechaCracion;

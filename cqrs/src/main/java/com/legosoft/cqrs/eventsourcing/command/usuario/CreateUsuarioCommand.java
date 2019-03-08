@@ -11,7 +11,7 @@ import org.axonframework.commandhandling.TargetAggregateIdentifier;
 public class CreateUsuarioCommand {
 
     @TargetAggregateIdentifier
-    private String idEvent;
+    private Long id;
 
     private String nombreUsuario;
 
