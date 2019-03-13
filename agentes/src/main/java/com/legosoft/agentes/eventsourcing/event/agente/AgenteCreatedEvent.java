@@ -1,5 +1,6 @@
 package com.legosoft.agentes.eventsourcing.event.agente;
 
+import com.legosoft.agentes.model.Agente;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,14 +13,8 @@ import java.util.Date;
 @AllArgsConstructor
 public class AgenteCreatedEvent {
 
-    private Long idAgente;
+    private Long idEvent;
 
-    private String nombreAgente;
-
-    private Date fechaCreacion;
-
-    private boolean activo;
-
-    private String estatus;
+    private Agente agente;
 
 }

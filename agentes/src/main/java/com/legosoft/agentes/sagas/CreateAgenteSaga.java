@@ -1,20 +1,10 @@
 package com.legosoft.agentes.sagas;
 
-import com.legosoft.agentes.eventsourcing.command.agente.AsociarAgenteUsuarioCommand;
-import com.legosoft.agentes.eventsourcing.command.agente.CreateAgenteCommand;
-import com.legosoft.agentes.eventsourcing.event.agente.AgenteCreatedEvent;
-import com.legosoft.agentes.eventsourcing.event.agente.AssociatedAgenteUsuarioEvent;
-import com.legosoft.agentes.model.Agente;
-import com.legosoft.agentes.repository.AgenteRepository;
 import com.legosoft.agentes.service.AgenteService;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.eventhandling.saga.SagaEventHandler;
-import org.axonframework.eventhandling.saga.StartSaga;
 import org.axonframework.spring.stereotype.Saga;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.UUID;
 
 @Slf4j
 @Saga

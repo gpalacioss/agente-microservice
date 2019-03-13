@@ -1,15 +1,9 @@
 //package com.legosoft.agentes.config;
-//
-//import org.axonframework.commandhandling.model.Repository;
-//import org.axonframework.eventhandling.saga.repository.SagaStore;
-//import org.axonframework.eventhandling.saga.repository.jpa.JpaSagaStore;
-//import org.axonframework.eventsourcing.eventstore.EventStorageEngine;
-//import org.axonframework.eventsourcing.eventstore.EventStore;
-//import org.axonframework.eventsourcing.eventstore.jpa.JpaEventStorageEngine;
-//import org.springframework.beans.factory.annotation.Value;
+//import org.axonframework.commandhandling.AsynchronousCommandBus;
+//import org.axonframework.commandhandling.CommandBus;
+//import org.axonframework.commandhandling.SimpleCommandBus;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
-//import org.springframework.context.annotation.Primary;
 //import org.springframework.jdbc.datasource.DriverManagerDataSource;
 //
 //import javax.sql.DataSource;

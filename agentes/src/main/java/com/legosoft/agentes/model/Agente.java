@@ -23,17 +23,16 @@ import java.util.Date;
 @NoArgsConstructor
 @Slf4j
 @Table(name = "agente")
-public class Agente implements Serializable {
+public class Agente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_agente")
-    @AggregateIdentifier
     private Long idAgente;
 
-//    @AggregateIdentifier
-//    @Transient
-//    private Long idEvent;
+    @Transient
+    @AggregateIdentifier
+    private Long idEvent;
 
     @Column(name = "nombre_agente")
     private String nombreAgente;
@@ -49,39 +48,5 @@ public class Agente implements Serializable {
 
     @Transient
     private String tipo = "agente";
-
-    @CommandHandler
-    public Agente(CreateAgenteCommand createAgenteCommand) {
-        log.info("Estamos en el generar Comando");
-//        Assert.hasLength(createAgenteCommand.getIdEvent().toString(), "El id no debe de estar nula o vacia");
-        AggregateLifecycle.apply(new AgenteCreatedEvent(createAgenteCommand.getIdAgente(), createAgenteCommand.getNombreAgente(), createAgenteCommand.getFechaCreacion(), createAgenteCommand.isActivo(), createAgenteCommand.getEstatus()));
-    }
-
-
-    @EventSourcingHandler
-    public void on(AgenteCreatedEvent agenteCreatedEvent){
-        this.idAgente = agenteCreatedEvent.getIdAgente();
-        this.nombreAgente = agenteCreatedEvent.getNombreAgente();
-        this.fechaCreacion = agenteCreatedEvent.getFechaCreacion();
-        this.activo = agenteCreatedEvent.isActivo();
-        this.estatus = agenteCreatedEvent.getEstatus();
-        log.info("genero el evento:: " + agenteCreatedEvent.getNombreAgente());
-        log.info("genero el evento:: " + agenteCreatedEvent.getFechaCreacion());
-    }
-
-    @CommandHandler
-    public void on(AsociarAgenteUsuarioCommand command){
-        log.info("Evento para asociar agente al usuario");
-        AggregateLifecycle.apply(new AssociatedAgenteUsuarioEvent(command.getIdEvent(), command.getNombreAgente(), new Date(), command.isActivo(), command.getEstatus()));
-    }
-
-    @EventSourcingHandler
-    public void on(AssociatedAgenteUsuarioEvent associatedAgenteUsuarioEvent){
-        this.idAgente = associatedAgenteUsuarioEvent.getIdAgente();
-        this.nombreAgente = associatedAgenteUsuarioEvent.getNombreAgente();
-        this.fechaCreacion = associatedAgenteUsuarioEvent.getFechaCreacion();
-        this.activo = associatedAgenteUsuarioEvent.isActivo();
-        this.estatus = associatedAgenteUsuarioEvent.getEstatus();
-    }
 
 }

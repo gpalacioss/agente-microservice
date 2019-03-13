@@ -6,8 +6,8 @@ import com.legosoft.agentes.eventsourcing.command.agente.CreateAgenteCommand;
 import com.legosoft.agentes.model.Agente;
 import com.legosoft.agentes.repository.AgenteRepository;
 import com.legosoft.agentes.service.AgenteService;
+import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.springframework.amqp.rabbit.annotation.RabbitListeners;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Service("agenteService")
 public class AgenteServiceImpl implements AgenteService {
 
@@ -27,19 +28,26 @@ public class AgenteServiceImpl implements AgenteService {
     @Autowired
     private AgenteRepository agenteRepository;
 
-    public AgenteServiceImpl(CommandGateway commandGateway){
+    public AgenteServiceImpl(CommandGateway commandGateway, AgenteRepository agenteRepository){
         this.commandGateway = commandGateway;
+        this.agenteRepository = agenteRepository;
     }
 
-    @Transactional
     public CompletableFuture<String> createCommandAgente(Agente agente){
-        agente.setIdAgente(null);
-        agenteRepository.save(agente);
-//        Agente nvoAgente = findAgenteById(agente.getIdAgente());
-        CreateAgenteCommand agenteCommand = new CreateAgenteCommand(nvoAgente.getIdAgente(), nvoAgente.getNombreAgente(), nvoAgente.getFechaCreacion(), nvoAgente.isActivo(), nvoAgente.getEstatus());
+        Agente validaAgente = agenteRepository.findByNombreAgente(agente.getNombreAgente());
+        CompletableFuture<String> future = null;
+        if (validaAgente == null){
+            agente.setIdAgente(null);
+            agente = agenteRepository.save(agente);
+            Long idEvent = agente.getIdAgente();
+            CreateAgenteCommand agenteCommand = new CreateAgenteCommand(agente.getIdAgente(), agente);
 //        rabbitTemplate.convertAndSend("agente_usuario","agente_usuario", new Gson().toJson(agente));
 //        rabbitTemplate.convertAndSend("usuarioCQRS","usuarioCQRS", new Gson().toJson(agente));
-        return commandGateway.sendAndWait(agenteCommand);
+            future = commandGateway.send(agenteCommand);
+        }else{
+            log.info("Error el agente ya existe");
+        }
+        return future;
     }
 
     public CompletableFuture<String> updateCommandRelacionUsarioAgente(Agente agente){
