@@ -32,6 +32,6 @@ public class UsuarioDto implements Serializable {
 
     private boolean activo;
 
-    private Set<AgenteDto> agentes = new HashSet<>();
+    private Set<CompaniaDto> companias = new HashSet<>();
 
 }

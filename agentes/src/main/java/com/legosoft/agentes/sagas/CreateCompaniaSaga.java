@@ -1,6 +1,6 @@
 package com.legosoft.agentes.sagas;
 
-import com.legosoft.agentes.service.AgenteService;
+import com.legosoft.agentes.service.CompaniaService;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.spring.stereotype.Saga;
@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
 @Saga
-public class CreateAgenteSaga {
+public class CreateCompaniaSaga {
 
     /**
      * Se anota como tiop transient por que no deben de persistir los recursos
@@ -19,7 +19,7 @@ public class CreateAgenteSaga {
 //    private final Repository<Agente> agenteRepository;
 
     @Autowired
-    private AgenteService agenteService;
+    private CompaniaService companiaService;
 
     private boolean creado = false;
 

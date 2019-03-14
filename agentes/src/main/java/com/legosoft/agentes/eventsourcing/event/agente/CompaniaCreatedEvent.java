@@ -1,20 +1,17 @@
 package com.legosoft.agentes.eventsourcing.event.agente;
 
-import com.legosoft.agentes.model.Agente;
+import com.legosoft.agentes.model.Compania;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.axonframework.commandhandling.TargetAggregateIdentifier;
 
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AgenteCreatedEvent {
+public class CompaniaCreatedEvent {
 
     private Long idEvent;
 
-    private Agente agente;
-
+    private Compania compania;
 }

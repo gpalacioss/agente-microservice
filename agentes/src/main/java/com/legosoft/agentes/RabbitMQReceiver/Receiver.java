@@ -1,49 +1,52 @@
 package com.legosoft.agentes.RabbitMQReceiver;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.legosoft.agentes.dtos.CompaniaDto;
 import com.legosoft.agentes.dtos.UsuarioDto;
-import com.legosoft.agentes.model.Agente;
-import com.legosoft.agentes.service.AgenteService;
+import com.legosoft.agentes.model.Compania;
+import com.legosoft.agentes.service.CompaniaService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.BeanUtils;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.io.IOException;
+import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 
 @Slf4j
+@Component
 public class Receiver {
     public static final String RECEIVE_METHOD_NAME = "receiveMessageUsuario";
 
     @Autowired
-    private AgenteService agenteService;
+    private CompaniaService companiaService;
 
     Gson gson = new GsonBuilder().create();
     SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    @Transactional
+    @RabbitListener(queues = {"usuario_nuevo"})
     public void receiveMessageUsuario(String message) {
+        log.info(message);
         UsuarioDto usuario = gson.fromJson(message, UsuarioDto.class);
-        String nombreAgente = usuario.getAgentes().stream().findFirst().get().getNombreAgente();
-        System.out.println("nombre del agente despues de recivir la cola de usuarios:::: " + nombreAgente);
-        sendGrupo(usuario,  nombreAgente);
-        Agente ag = new Agente();
-        BeanUtils.copyProperties(usuario.getAgentes().stream().findFirst().get(), ag);
-//        agenteService.updateCommandRelacionUsarioAgente(ag);
+        CompaniaDto comp = usuario.getCompanias().stream().findFirst().get();
+//        String nombreAgente = usuario.getCompanias().stream().findFirst().get().getNombreCompania();
+        log.info("Nombre del usuario ::" + usuario.getNombreUsuario());
+        log.info("Nombre de la compania:: " + comp.getNombreCompania());
+        log.info("Nombre del grupo:: " + comp.getNombreGrupo());
+        sendGrupo(usuario,  comp.getNombreCompania(), comp.getNombreGrupo());
+        Compania ag = companiaService.findCompaniaByNombre(usuario.getCompanias().stream().findFirst().get().getNombreCompania());
+        companiaService.relacionarUsuarioCompania(ag);
     }
 
 
-    public void sendGrupo(UsuarioDto usuarioDto, String agente) {
+    public void sendGrupo(UsuarioDto usuarioDto, String nombreCompania, String nombreGrupo) {
 
         String nombreUsuario = usuarioDto.getNombreUsuario();
-        String nombreGrupo = "Group-" +agente;
-        log.info("Recibio la cola del usuario");
+        log.info("Recibio mensaje del micreservicio de usuario y se la envia al microservicio de grupo empresarial ");
 
-    agenteService.EnviaColaGrupo(nombreGrupo, nombreUsuario.replaceAll("\"", ""), agente);
+        companiaService.EnviaColaGrupo(nombreGrupo, nombreUsuario, nombreCompania);
 
     }
 
