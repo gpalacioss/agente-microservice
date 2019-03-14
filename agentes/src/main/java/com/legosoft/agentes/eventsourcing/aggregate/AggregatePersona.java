@@ -14,7 +14,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Persona {
+public class AggregatePersona {
 
     @AggregateIdentifier
     private String idPersona;
