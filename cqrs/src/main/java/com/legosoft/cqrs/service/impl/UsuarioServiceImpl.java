@@ -1,11 +1,11 @@
 package com.legosoft.cqrs.service.impl;
 
 import com.legosoft.cqrs.eventsourcing.command.usuario.CreateUsuarioCommand;
-import com.legosoft.cqrs.models.Agente;
+import com.legosoft.cqrs.models.Compania;
 import com.legosoft.cqrs.models.Perfil;
 import com.legosoft.cqrs.models.Usuario;
 import com.legosoft.cqrs.repository.UsuarioRepository;
-import com.legosoft.cqrs.service.AgenteService;
+import com.legosoft.cqrs.service.CompaniaService;
 import com.legosoft.cqrs.service.PerfilService;
 import com.legosoft.cqrs.service.UsuarioService;
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service("usuarioService")
@@ -27,7 +25,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private AgenteService agenteService;
+    private CompaniaService companiaService;
 
     @Autowired
     private PerfilService perfilService;
@@ -38,12 +36,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 
     public CompletableFuture<String> createCommandUsuario(Usuario usuario){
-        Set<Agente> lstAgentes = new HashSet<>();
+        Set<Compania> lsCompanias = new HashSet<>();
         Set<Perfil> lstPerfiles = new HashSet<>();
 
-        usuario.getAgentes().forEach(a -> {
-            Agente ag = agenteService.findAgenteByNombreAgente(a.getNombreAgente());
-            lstAgentes.add(ag);
+        usuario.getCompanias().forEach(a -> {
+            Compania comp = companiaService.findCompaniaByNombre(a.getNombreCompania());
+            lsCompanias.add(comp);
         });
 
         usuario.getPerfiles().forEach(p -> {
@@ -52,7 +50,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         });
 
         usuario.setId(null);
-        usuario.setAgentes(lstAgentes);
+        usuario.setCompanias(lsCompanias);
         usuario.setPerfiles(lstPerfiles);
 
         Usuario nvoUsuario = saveUsuario(usuario);

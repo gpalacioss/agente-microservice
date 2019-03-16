@@ -44,7 +44,7 @@ public class Usuario implements Serializable {
     private boolean activo;
 
     @Relationship(type = "ADMINISTRA")
-    private Set<Agente> agentes = new HashSet<>();
+    private Set<Compania> companias = new HashSet<>();
 
     @Relationship(type = "HAS_PERFIL")
     private Set<Perfil> perfiles = new HashSet<>();
