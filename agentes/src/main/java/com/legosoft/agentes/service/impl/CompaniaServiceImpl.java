@@ -10,11 +10,13 @@ import com.legosoft.agentes.service.CompaniaService;
 import com.legosoft.agentes.utils.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -45,8 +47,20 @@ public class CompaniaServiceImpl implements CompaniaService {
             compania = companiaRepository.save(compania);
             Long idEvent = compania.getIdCompania();
             CreateCompaniaCommand companiaCommand = new CreateCompaniaCommand(compania.getIdCompania(), compania);
-            rabbitTemplate.convertAndSend("agente_usuario","agente_usuario", new Gson().toJson(compania));
-            rabbitTemplate.convertAndSend("usuarioCQRS","usuarioCQRS", new Gson().toJson(compania));
+            try{
+                rabbitTemplate.convertAndSend("agente_usuario","agente_usuario", new Gson().toJson(compania));
+            }catch (Exception e){
+
+            }
+
+            try{
+                rabbitTemplate.convertAndSend("usuarioCQRS","usuarioCQRS", new Gson().toJson(compania));
+
+            }catch (Exception e){
+
+            }
+
+
             CompletableFuture<String> future = commandGateway.send(companiaCommand);
             response = new Response(HttpStatus.ACCEPTED.value(), "La compañia se creo correctamente");
         }else{
