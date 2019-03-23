@@ -1,24 +1,53 @@
 package com.legosoft.agentes.circuitbreaker;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.netflix.hystrix.contrib.javanica.command.AsyncResult;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@Component
+import java.util.Map;
+import java.util.concurrent.Future;
+
+@Slf4j
+@Service("consumerRestCircuitBreaker")
 public class ConsumerRestCircuitBreaker {
 
+//    private final String URL_SERVICE = "http://message-restore/message/restore/get/";
+    private final String URL_SERVICE = "http://student-service/getStudentDetailsForSchool/{schoolname}";
+//    private final String URL_SERVICE = "http://192.168.20.93:8081/message/restore/create/";
 
-    @Autowired
-    private RestTemplate restTemplate;
 
-    @HystrixCommand(fallbackMethod = "errorHystrix")
-    public String consumerRestRabbitService() {
-        String datos = "";
-        return restTemplate.getForObject("http:192.168.20.109/rest", String.class, datos);
+    @LoadBalanced
+    private RestTemplate restTemplate = new RestTemplate();
+
+    //TODO: Este metodo realiza un control de ruptura del circuito de comunicacion de modo asincrono
+//    @HystrixCommand(fallbackMethod = "errorHystrix")
+    public String consumerRestRabbitService(Map<String, Object> info) {
+
+        restTemplate.exchange(URL_SERVICE, HttpMethod.GET, null, new ParameterizedTypeReference<String>() {}, "abcschool");
+//        return  restTemplate.postForObject(URL_SERVICE, info, String.class);
+        return "hola";
     }
 
-    public String errorHystrix(){
+//    //    TODO: Este metodo realiza un control de ruptura del circuito de comunicacion de modo asincrono
+////    @HystrixCommand(fallbackMethod = "errorHystrix")
+//    public Future<String> consumerRestRabbitService(Map<String, Object> info) {
+//        return new AsyncResult<String>() {
+//            public String invoke() {
+//                return restTemplate.postForObject(URL_SERVICE, info, String.class);
+//            }
+//
+//        };
+//    }
+
+    public String errorHystrix(Map<String, Object> info){
+        log.info("<<<<<<<<<<< El rest esta fallando >>>>>>>>>>>>>>>>>");
         return "el servicio esta fallando";
     }
+
 }

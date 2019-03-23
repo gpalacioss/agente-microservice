@@ -1,6 +1,7 @@
 package com.legosoft.agentes.service.impl;
 
 import com.google.gson.Gson;
+import com.legosoft.agentes.circuitbreaker.ConsumerRestCircuitBreaker;
 import com.legosoft.agentes.eventsourcing.command.agente.AsociarAgenteUsuarioCommand;
 import com.legosoft.agentes.eventsourcing.command.agente.AsociarCompaniaGrupoCommand;
 import com.legosoft.agentes.eventsourcing.command.agente.CreateCompaniaCommand;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -32,12 +32,17 @@ public class CompaniaServiceImpl implements CompaniaService {
     @Autowired
     private CompaniaRepository companiaRepository;
 
+    @Autowired
+    private ConsumerRestCircuitBreaker consumerRestCircuitBreaker;
+
     public CompaniaServiceImpl(CommandGateway commandGateway, CompaniaRepository companiaRepository){
         this.commandGateway = commandGateway;
         this.companiaRepository = companiaRepository;
     }
 
     public Response createCompaniaCommand(Compania compania){
+
+        Map<String, Object> info = new HashMap<>();
 
         Compania validaCompania = companiaRepository.findByNombreCompania(compania.getNombreCompania());
         Response response;
@@ -47,18 +52,30 @@ public class CompaniaServiceImpl implements CompaniaService {
             compania = companiaRepository.save(compania);
             Long idEvent = compania.getIdCompania();
             CreateCompaniaCommand companiaCommand = new CreateCompaniaCommand(compania.getIdCompania(), compania);
-            try{
-                rabbitTemplate.convertAndSend("agente_usuario","agente_usuario", new Gson().toJson(compania));
-            }catch (Exception e){
 
-            }
+//            try{
+//                rabbitTemplate.convertAndSend("agente_usuario","agente_usuario", new Gson().toJson(compania));
+//            }catch (Exception e){
 
-            try{
-                rabbitTemplate.convertAndSend("usuarioCQRS","usuarioCQRS", new Gson().toJson(compania));
 
-            }catch (Exception e){
+                info.put("routingKey", "agente_usuario");
+                info.put("exchange", "agente_usuario");
+                info.put("body", compania);
+                consumerRestCircuitBreaker.consumerRestRabbitService(info);
 
-            }
+//            }
+
+//            try{
+//                rabbitTemplate.convertAndSend("usuarioCQRS","usuarioCQRS", new Gson().toJson(compania));
+//
+//            }catch (Exception e){
+//
+//                info.put("routingKey", "usuarioCQRS");
+//                info.put("exchange", "usuarioCQRS");
+//                info.put("body", compania);
+//                consumerRestCircuitBreaker.consumerRestRabbitService(info);
+//
+//            }
 
 
             CompletableFuture<String> future = commandGateway.send(companiaCommand);

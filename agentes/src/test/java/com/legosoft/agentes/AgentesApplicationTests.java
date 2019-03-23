@@ -1,5 +1,7 @@
 package com.legosoft.agentes;
 
+import com.legosoft.agentes.circuitbreaker.ConsumerRestCircuitBreaker;
+import com.legosoft.agentes.model.Compania;
 import com.legosoft.agentes.service.CompaniaService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,10 +16,20 @@ public class AgentesApplicationTests {
     @Autowired
     private CompaniaService companiaService;
 
+    @Autowired
+    private ConsumerRestCircuitBreaker consumerRestCircuitBreaker;
+
     @Test
     public void contextLoads() {
 
         companiaService.findCompaniaById(1L);
+    }
+
+    @Test
+    public void hystrix(){
+        Compania compania = new Compania();
+
+//        consumerRestCircuitBreaker.consumerRestRabbitService(compania);
     }
 
 }
