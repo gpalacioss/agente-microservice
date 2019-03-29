@@ -1,11 +1,7 @@
 package com.legosoft.agentes.eventsourcing.aggregate;
 
-import com.legosoft.agentes.eventsourcing.command.agente.AsociarAgenteUsuarioCommand;
-import com.legosoft.agentes.eventsourcing.command.agente.AsociarCompaniaGrupoCommand;
-import com.legosoft.agentes.eventsourcing.command.agente.CreateCompaniaCommand;
-import com.legosoft.agentes.eventsourcing.event.agente.AssociatedAgenteUsuarioEvent;
-import com.legosoft.agentes.eventsourcing.event.agente.CompaniaAssociatedGrupoEvent;
-import com.legosoft.agentes.eventsourcing.event.agente.CompaniaCreatedEvent;
+import com.legosoft.agentes.eventsourcing.command.agente.*;
+import com.legosoft.agentes.eventsourcing.event.agente.*;
 import com.legosoft.agentes.model.Compania;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,8 +32,7 @@ public class AggregateCompania {
 
     @CommandHandler
     public AggregateCompania(CreateCompaniaCommand createCompaniaCommand) {
-        log.info("Estamos en el generar Comando");
-//        Assert.hasLength(createAgenteCommand.getIdEvent().toString(), "El id no debe de estar nula o vacia");
+        log.info("<<<<<<<<<Estamos en el generar Comando>>>>>>>>>>>>>");
         AggregateLifecycle.apply(new CompaniaCreatedEvent(createCompaniaCommand.getIdEvent(), createCompaniaCommand.getCompania()));
     }
 
@@ -46,17 +41,18 @@ public class AggregateCompania {
     public void on(CompaniaCreatedEvent agenteCreatedEvent){
         this.idEvent = agenteCreatedEvent.getIdEvent();
         this.compania = agenteCreatedEvent.getCompania();
-        log.info("id del evento:: " + agenteCreatedEvent.getIdEvent());
+        log.info("<<<<<< Evento para Crear la comapañia >>>>>>>>>>");
     }
 
     @CommandHandler
     public void on(AsociarAgenteUsuarioCommand command){
-        log.info("Evento para asociar agente al usuario");
+        log.info("<<<<<<<<<<< comando para asociar comapañia al usuario >>>>>>>>>>>>>>");
         AggregateLifecycle.apply(new AssociatedAgenteUsuarioEvent(command.getIdEvent(), command.getCompania()));
     }
 
     @EventSourcingHandler
     public void on(AssociatedAgenteUsuarioEvent associatedAgenteUsuarioEvent){
+        log.info("<<<<<<<<<<< Evento para asociar compañia al usuario >>>>>>>>>>>>>>");
         this.idEvent = associatedAgenteUsuarioEvent.getIdEvent();
         this.compania = associatedAgenteUsuarioEvent.getCompania();
 
@@ -73,6 +69,37 @@ public class AggregateCompania {
         log.info("<<<<<<<<<< Generando evento de asociacion de compañia a grupo >>>>>>>>>>>>>");
         this.idEvent = event.getIdEvent();
         this.compania = event.getCompania();
+    }
+
+
+    @CommandHandler
+    public void on(ErrorRelationUsuarioCompaniaCommand command){
+        log.info("<<<<<<<<< Comando que ejecutara el evento de error al asociar grupo con la compañia >>>>>>>>>>>>>>>>>>><");
+        AggregateLifecycle.apply(new ErrorRelationUsuarioCompaniaEvent(command.getIdEvent(), command.getCompania()));
+    }
+
+    @EventSourcingHandler
+    public void on(ErrorRelationUsuarioCompaniaEvent event){
+
+        log.info("<<<<<<<<<<<<<<< Evento de  error al asociar usuario con la compañia >>>>>>>>>>>>>>>>>");
+        this.idEvent = event.getIdEvent();
+        this.compania = event.getCompania();
+
+    }
+
+    @CommandHandler
+    public void on(ErrorRelationGrupoCompaniaCommand command){
+        log.info("<<<<<<<<<<<<< Comando que ejecutara el evento de error al asociar grupo con la compañia >>>>>>>>>>>>>>>>>");
+        AggregateLifecycle.apply(new ErrorRelationGrupoCompaniaEvent(command.getIdEvent(), command.getCompania()));
+    }
+
+    @EventSourcingHandler
+    public void on(ErrorRelationGrupoCompaniaEvent event){
+
+        log.info("<<<<<<<<<<<<<< Evento de error al relacionar la comṕañia con el grupo empresarial >>>>>>>>>><<<");
+        this.idEvent = event.getIdEvent();
+        this.compania = event.getCompania();
+
     }
 
 }

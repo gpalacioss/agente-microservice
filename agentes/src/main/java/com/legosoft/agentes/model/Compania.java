@@ -52,5 +52,8 @@ public class Compania implements Serializable {
     @Transient
     private String tipo = "compania";
 
+    @Transient
+    private Long fechaCreacionMillis;
+
 
 }

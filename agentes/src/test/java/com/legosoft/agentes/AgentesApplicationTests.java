@@ -1,6 +1,6 @@
 package com.legosoft.agentes;
 
-import com.legosoft.agentes.circuitbreaker.ConsumerRestCircuitBreaker;
+//import com.legosoft.agentes.circuitbreaker.ConsumerRestCircuitBreaker;
 import com.legosoft.agentes.model.Compania;
 import com.legosoft.agentes.service.CompaniaService;
 import org.junit.Test;
@@ -16,8 +16,8 @@ public class AgentesApplicationTests {
     @Autowired
     private CompaniaService companiaService;
 
-    @Autowired
-    private ConsumerRestCircuitBreaker consumerRestCircuitBreaker;
+//    @Autowired
+//    private ConsumerRestCircuitBreaker consumerRestCircuitBreaker;
 
     @Test
     public void contextLoads() {

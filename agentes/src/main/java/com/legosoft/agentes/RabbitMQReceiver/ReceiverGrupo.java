@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -26,16 +28,18 @@ public class ReceiverGrupo {
     public void receiveMessageGrupo(String messageGrupo) {
 
         log.info("Mensaje recibido del microservicio grupo empresarial:: " + messageGrupo);
-        String l = "]";
-        String m = "[";
 
         JsonParser jsonParser = new JsonParser();
         JsonObject jsonObject = (JsonObject) jsonParser.parse(messageGrupo);
         String nombreCompania = String.valueOf(jsonObject.get("nombreCompania")).replaceAll("\"","").replaceAll("\\u005B", "").replaceAll("\\u005D", "");
+        String estatus = String.valueOf(jsonObject.get("estatus"));
 
-        Compania compania = new Compania();
-        compania.setNombreCompania(nombreCompania);
+        Compania compania = companiaService.findCompaniaByNombre(nombreCompania);
+        if ("FAILED_CREATE_GRUPO_EMPRESARIAL".equals(estatus)){
+//            companiaService.errorRelationGrupoCompaniaCommand(compania);
+        }else{
+            companiaService.asociarCompaniaGrupo(compania);
+        }
 
-        companiaService.asociarCompaniaGrupo(compania);
     }
 }

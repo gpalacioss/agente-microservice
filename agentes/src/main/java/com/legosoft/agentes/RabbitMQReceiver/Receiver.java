@@ -10,9 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+
 
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Slf4j
 @Component
@@ -25,19 +28,24 @@ public class Receiver {
     Gson gson = new GsonBuilder().create();
     SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    @Transactional
     @RabbitListener(queues = {"usuario_nuevo"})
     public void receiveMessageUsuario(String message) {
         log.info(message);
+
         UsuarioDto usuario = gson.fromJson(message, UsuarioDto.class);
-        CompaniaDto comp = usuario.getCompanias().stream().findFirst().get();
-//        String nombreAgente = usuario.getCompanias().stream().findFirst().get().getNombreCompania();
-        log.info("Nombre del usuario ::" + usuario.getNombreUsuario());
-        log.info("Nombre de la compania:: " + comp.getNombreCompania());
-        log.info("Nombre del grupo:: " + comp.getNombreGrupo());
-        sendGrupo(usuario,  comp.getNombreCompania(), comp.getNombreGrupo());
+        Compania comp = usuario.getCompanias().stream().findFirst().get();
+
         Compania ag = companiaService.findCompaniaByNombre(usuario.getCompanias().stream().findFirst().get().getNombreCompania());
-        companiaService.relacionarUsuarioCompania(ag);
+        if ("ERROR_AL_CREAR_USUARIO".equals(usuario.getEstatus())){
+            companiaService.errorRelationUsuarioCompaniaCommand(ag);
+//            companiaService.errorRelationGrupoCompaniaCommand(ag);
+        }else{
+            companiaService.relacionarUsuarioCompania(ag);
+            sendGrupo(usuario,  comp.getNombreCompania(), comp.getNombreGrupo());
+        }
+
+
+
     }
 
 
@@ -46,7 +54,7 @@ public class Receiver {
         String nombreUsuario = usuarioDto.getNombreUsuario();
         log.info("Recibio mensaje del micreservicio de usuario y se la envia al microservicio de grupo empresarial ");
 
-        companiaService.EnviaColaGrupo(nombreGrupo, nombreUsuario, nombreCompania);
+        companiaService.enviaColaGrupo(nombreGrupo, nombreUsuario, nombreCompania);
 
     }
 

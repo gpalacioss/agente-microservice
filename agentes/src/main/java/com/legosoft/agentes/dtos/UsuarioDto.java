@@ -1,5 +1,6 @@
 package com.legosoft.agentes.dtos;
 
+import com.legosoft.agentes.model.Compania;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,22 +17,15 @@ import java.util.Set;
 public class UsuarioDto implements Serializable {
 
 
-    private Long id;
-    @AggregateIdentifier
-    private String idEvent;
-
+    private Long idUsuario;
     private String nombreUsuario;
-
-    private String nombreCompleto;
-
-    private String email;
-
     private String password;
-
+    private String email;
     private boolean administrador;
-
     private boolean activo;
+    private String tipo = "Usuario";
+    private String estatus;
 
-    private Set<CompaniaDto> companias = new HashSet<>();
+    private Set<Compania> companias = new HashSet<>();
 
 }

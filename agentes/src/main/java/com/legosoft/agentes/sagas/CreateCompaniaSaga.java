@@ -1,32 +1,32 @@
-package com.legosoft.agentes.sagas;
-
-import com.legosoft.agentes.service.CompaniaService;
-import lombok.extern.slf4j.Slf4j;
-import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.spring.stereotype.Saga;
-import org.springframework.beans.factory.annotation.Autowired;
-
-@Slf4j
-@Saga
-public class CreateCompaniaSaga {
-
-    /**
-     * Se anota como tiop transient por que no deben de persistir los recursos
-     */
-    @Autowired
-    private transient CommandGateway commandGateway;
-
-//    private final Repository<Agente> agenteRepository;
-
-    @Autowired
-    private CompaniaService companiaService;
-
-    private boolean creado = false;
-
-//    public CreateAgenteSaga(Repository<Agente> agenteRepository){
-//        this.agenteRepository = agenteRepository;
-//    }
-
+//package com.legosoft.agentes.sagas;
+//
+//import com.legosoft.agentes.service.CompaniaService;
+//import lombok.extern.slf4j.Slf4j;
+//import org.axonframework.commandhandling.gateway.CommandGateway;
+//import org.axonframework.spring.stereotype.Saga;
+//import org.springframework.beans.factory.annotation.Autowired;
+//
+//@Slf4j
+//@Saga
+//public class CreateCompaniaSaga {
+//
+//    /**
+//     * Se anota como tiop transient por que no deben de persistir los recursos
+//     */
+//    @Autowired
+//    private transient CommandGateway commandGateway;
+//
+////    private final Repository<Agente> agenteRepository;
+//
+//    @Autowired
+//    private CompaniaService companiaService;
+//
+//    private boolean creado = false;
+//
+////    public CreateAgenteSaga(Repository<Agente> agenteRepository){
+////        this.agenteRepository = agenteRepository;
+////    }
+//
 //    @StartSaga
 //    @SagaEventHandler(associationProperty = "idAgente")
 //    public void handle(AgenteCreatedEvent event){
@@ -38,8 +38,8 @@ public class CreateCompaniaSaga {
 //            commandGateway.send(command);
 //        }
 //    }
-
-
+//
+//
 //    @EndSaga
 //    @SagaEventHandler(associationProperty = "idAgenteEvent")
 //    public void on(AssociatedAgenteUsuarioEvent event){
@@ -50,4 +50,4 @@ public class CreateCompaniaSaga {
 ////        AsociarAgenteUsuarioCommand asociarAgenteUsuarioCommand = new AsociarAgenteUsuarioCommand(ag.getIdAgenteEvent(), event.getNombreAgente(), event.isActivo(), "USUARIO_RELACIONADO_CONAGETE");
 ////        commandGateway.send(asociarAgenteUsuarioCommand);
 //    }
-}
+//}

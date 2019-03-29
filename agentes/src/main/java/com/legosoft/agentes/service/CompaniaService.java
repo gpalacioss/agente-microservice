@@ -16,7 +16,14 @@ public interface CompaniaService {
      * @param compania
      * @return
      */
-    public CompletableFuture<String> relacionarUsuarioCompania(Compania compania);
+    public void relacionarUsuarioCompania(Compania compania);
+
+    /**
+     * Servicio que genera el comando que guarda el evento de error al relacionar el usuario a la compañia
+     * @param compania
+     * @return
+     */
+    public CompletableFuture<String> errorRelationUsuarioCompaniaCommand(Compania compania);
 
     /**
      * Servicio que genera un comando para guardar el evento de asociacion de compañia a un grupo empresarial
@@ -24,6 +31,14 @@ public interface CompaniaService {
      * @return
      */
     public CompletableFuture<String> asociarCompaniaGrupo(Compania compania);
+
+
+    /**
+     * Servicio que genera el comando para guardar el evento de error al asociar el grupo a la compañia
+     * @param compania
+     * @return
+     */
+    public CompletableFuture<String> errorRelationGrupoCompaniaCommand(Compania compania);
 
     /**
      *
@@ -57,6 +72,6 @@ public interface CompaniaService {
      */
     public Compania findCompaniaByNombre(String nombreCompania);
 
-    public void EnviaColaGrupo(String nombreGrupo, String nombreUsuario, String nombreCompania);
+    public void enviaColaGrupo(String nombreGrupo, String nombreUsuario, String nombreCompania);
 
 }

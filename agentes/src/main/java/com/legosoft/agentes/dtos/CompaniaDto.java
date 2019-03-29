@@ -14,7 +14,7 @@ public class CompaniaDto {
 
     private String nombrePersona;
 
-    private Date fechaCreacion;
+    private Long fechaCreacion;
 
     private String direccion;
 
@@ -22,5 +22,5 @@ public class CompaniaDto {
 
     private String nombreGrupo;
 
-
+    private Long fechaCreacionMillis;
 }

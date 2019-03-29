@@ -27,7 +27,7 @@
 //    public DataSource dataSource(){
 //        DriverManagerDataSource dataSource = new DriverManagerDataSource();
 //        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-//        dataSource.setUrl("jdbc:mysql://192.168.20.109:3600/agentes");
+//        dataSource.setUrl("jdbc:mysql://192.168.20.109:3600/compania");
 //        dataSource.setUsername("root");
 //        dataSource.setPassword("admin");
 //        return dataSource;
