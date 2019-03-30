@@ -9,6 +9,7 @@ import org.axonframework.spring.stereotype.Aggregate;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Transient;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -50,6 +51,7 @@ public class Compania implements Serializable {
     private String estatus;
 
 
-
+    @Transient
+    private Long fechaCreacionMillis;
 
 }

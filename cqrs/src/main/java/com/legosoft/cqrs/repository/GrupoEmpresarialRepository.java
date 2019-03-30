@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GrupoEmpresarialRepository extends Neo4jRepository<GrupoEmpresarial, Long> {
 
+    GrupoEmpresarial findByNombreGrupo(String nombreGrupo);
+
 }

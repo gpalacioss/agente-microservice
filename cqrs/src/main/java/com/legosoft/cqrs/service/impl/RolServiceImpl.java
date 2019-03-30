@@ -31,8 +31,15 @@ public class RolServiceImpl implements RolService {
 
     public CompletableFuture<String> createCommandRol(Rol rol){
         Set<Permiso> lstPermisos = new HashSet<>();
-       rol.setIdRol(null);
-       rol.getPermisos().forEach(p -> {
+
+        Rol rl = rolRepository.findByNombre(rol.getNombre());
+
+        if (rl != null){
+            rol.setIdRol(rl.getIdRol());
+        }else{
+            rol.setIdRol(null);
+        }
+           rol.getPermisos().forEach(p -> {
            Permiso per = permisoService.findPermisoByNombre(p.getNombre());
            lstPermisos.add(per);
        });

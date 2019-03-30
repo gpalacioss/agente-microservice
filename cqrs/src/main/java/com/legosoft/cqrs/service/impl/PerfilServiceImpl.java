@@ -31,12 +31,21 @@ public class PerfilServiceImpl implements PerfilService {
 
     public CompletableFuture<String> createCommandPerfil(Perfil perfil){
         Set<Rol> lstRoles = new HashSet<>();
+
+        Perfil pr = perfilRepository.findByNombre(perfil.getNombre());
+
+        if (pr != null){
+            perfil.setIdPerfil(pr.getIdPerfil());
+        }else{
+            perfil.setIdPerfil(null);
+        }
+
         perfil.getRolesPerfil().forEach(r -> {
             Rol rl = rolService.findRolByNombreRol(r.getNombre());
             lstRoles.add(rl);
         });
 
-        perfil.setIdPerfil(null);
+
         perfil.setRolesPerfil(lstRoles);
         perfil = mergePerfil(perfil);
 

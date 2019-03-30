@@ -18,7 +18,7 @@ public class RabbitMQConsumerConfig {
     public static final String ROUTING_KEY = "usuarioCQRS";
 
     private static final String QUEUE_NAME = "cqrs";
-    private static final boolean IS_DURABLE_QUEUE = false;
+    private static final boolean IS_DURABLE_QUEUE = true;
 
     @Bean
     Queue queue() {

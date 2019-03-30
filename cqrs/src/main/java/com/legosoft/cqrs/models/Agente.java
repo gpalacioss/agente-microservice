@@ -14,6 +14,7 @@ import org.axonframework.spring.stereotype.Aggregate;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Transient;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
@@ -34,9 +35,12 @@ public class Agente implements Serializable {
 
     private String nombreAgente;
 
-    private Date fechaCracion;
+    private Date fechaCreacion;
 
     private boolean activo;
+
+    @Transient
+    private Date fechaCreacionMillis;
 
     @CommandHandler
     public Agente(CreateAgenteCommand createAgenteCommand) {
@@ -49,7 +53,7 @@ public class Agente implements Serializable {
     public void on(AgenteCreatedEvent agenteCreatedEvent){
         this.idAgente = agenteCreatedEvent.getIdAgente();
         this.nombreAgente = agenteCreatedEvent.getNombreAgente();
-        this.fechaCracion = agenteCreatedEvent.getFechaCracion();
+        this.fechaCreacion = agenteCreatedEvent.getFechaCracion();
         this.activo = agenteCreatedEvent.isActivo();
     }
 }

@@ -8,6 +8,8 @@ import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service("companiaService")
 public class CompaniaServiceImpl implements CompaniaService {
 
@@ -24,8 +26,13 @@ public class CompaniaServiceImpl implements CompaniaService {
     private CompaniaRepository companiaRepository;
 
     public Compania createCommandCompania(Compania compania){
-        compania.setIdCompania(null);
-        Compania comp =  saveCompania(compania);
+        Compania comp = companiaRepository.findByNombreCompania(compania.getNombreCompania());
+        if (comp != null){
+            compania.setIdCompania(comp.getIdCompania());
+        }else {
+            compania.setIdCompania(null);
+        }
+        comp =  saveCompania(compania);
         CreateAgenteCommand agenteCommand = new CreateAgenteCommand(comp.getIdCompania(), comp.getNombreCompania(), comp.getFechaCreacion(), comp.isActivo());
 //        rabbitTemplate.convertAndSend("agente_usuario","agente_usuario", new Gson().toJson(new MessageColas("Agente Creado para el alfons", " gpalacios@legosoft.com.mx", agente)));
         commandGateway.send(agenteCommand);

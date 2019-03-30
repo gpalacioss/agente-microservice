@@ -23,7 +23,13 @@ public class PermisoServiceImpl implements PermisoService {
     }
 
     public CompletableFuture<String> createCommandPermiso(Permiso permiso){
-        permiso.setIdPermiso(null);
+        Permiso pr = permisoRepository.findByNombre(permiso.getNombre());
+        if (pr != null){
+            permiso.setIdPermiso(pr.getIdPermiso());
+        }else{
+            permiso.setIdPermiso(null);
+        }
+
         permiso = mergePermiso(permiso);
         CreatePermisoCommand command = new CreatePermisoCommand(permiso.getIdPermiso(),permiso.getNombre(), permiso.getTipo(), permiso.getDescripcion(), permiso.getPermisoInicioSesion(), permiso.getActivo());
         return commandGateway.send(command);

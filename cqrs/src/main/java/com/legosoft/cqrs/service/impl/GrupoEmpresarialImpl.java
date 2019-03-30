@@ -36,13 +36,20 @@ public class GrupoEmpresarialImpl implements GrupoEmpresarialService {
     public CompletableFuture<String> createCommandGrupo(GrupoEmpresarial grupoEmpresarial){
 
         Set<Compania> lsCompania = new HashSet<>();
+        GrupoEmpresarial gp = grupoEmpresarialRepository.findByNombreGrupo(grupoEmpresarial.getNombreGrupo());
+
+        if (gp != null){
+            grupoEmpresarial.setId(gp.getId());
+        }else{
+            grupoEmpresarial.setId(null);
+        }
 
         grupoEmpresarial.getCompanias().forEach(a -> {
             Compania compania = companiaService.findCompaniaByNombre(a.getNombreCompania());
             lsCompania.add(compania);
         });
 
-        grupoEmpresarial.setId(null);
+
         grupoEmpresarial.setCompanias(lsCompania);
         grupoEmpresarial.setUsuario(usuarioService.findUsuarioByNombre(grupoEmpresarial.getUsuario().getNombreUsuario()));
 

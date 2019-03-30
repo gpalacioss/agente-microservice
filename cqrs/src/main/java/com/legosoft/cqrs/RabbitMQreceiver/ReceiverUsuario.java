@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Slf4j
 public class ReceiverUsuario {
@@ -58,7 +59,9 @@ public class ReceiverUsuario {
 
         switch (tipo){
             case "grupo":
+                log.info("Mnesaje recibido del servcio de grupo");
                 GrupoEmpresarial grupoEmpresarial = gson.fromJson(mensaje, GrupoEmpresarial.class);
+                grupoEmpresarial.setFechaCreacion(new Date(grupoEmpresarial.getFechaCreacionMillis()));
                 grupoEmpresarialService.createCommandGrupo(grupoEmpresarial);
                 break;
             case "Usuario":
@@ -69,6 +72,7 @@ public class ReceiverUsuario {
             case "compania":
 
                 Compania compania = gson.fromJson(mensaje, Compania.class);
+                compania.setFechaCreacion(new Date(compania.getFechaCreacionMillis()));
                 companiaService.createCommandCompania(compania);
                 break;
 

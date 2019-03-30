@@ -39,19 +39,33 @@ public class UsuarioServiceImpl implements UsuarioService {
         Set<Compania> lsCompanias = new HashSet<>();
         Set<Perfil> lstPerfiles = new HashSet<>();
 
+        Usuario usr = usuarioRepository.findByNombreUsuario(usuario.getNombreUsuario());
+
+        if (usr != null){
+            usuario.setId(usr.getId());
+        }else{
+            usuario.setId(null);
+        }
+
         usuario.getCompanias().forEach(a -> {
             Compania comp = companiaService.findCompaniaByNombre(a.getNombreCompania());
             lsCompanias.add(comp);
         });
 
-        usuario.getPerfiles().forEach(p -> {
-            Perfil pr = perfilService.finsPerfilByNombre(p.getNombre());
-            lstPerfiles.add(pr);
-        });
+        if (usuario.getPerfiles().size() != 0){
 
-        usuario.setId(null);
+            usuario.getPerfiles().forEach(p -> {
+                Perfil pr = perfilService.finsPerfilByNombre(p.getNombre());
+                lstPerfiles.add(pr);
+            });
+
+            usuario.setPerfiles(lstPerfiles);
+        }
+
+
+
         usuario.setCompanias(lsCompanias);
-        usuario.setPerfiles(lstPerfiles);
+
 
         Usuario nvoUsuario = saveUsuario(usuario);
 
