@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
-@EnableAutoConfiguration(exclude={AMQPAutoConfiguration.class})
+//@EnableAutoConfiguration(exclude={AMQPAutoConfiguration.class})
 @SpringBootApplication
 @EnableEurekaClient
 public class FacultadesApplication {

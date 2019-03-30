@@ -1,6 +1,7 @@
 package com.legosoft.facultades.services;
 
 import com.legosoft.facultades.models.Perfil;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -12,7 +13,7 @@ public interface PerfilService {
      * @param perfil
      * @return
      */
-    CompletableFuture<String> savePefil(Perfil perfil);
+    public ResponseEntity savePefil(Perfil perfil);
 
     /**
      *

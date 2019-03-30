@@ -1,17 +1,22 @@
 package com.legosoft.facultades.services.impl;
 
 import com.google.gson.Gson;
+import com.legosoft.facultades.circuitbreaker.ConsumerRestCircuitBreaker;
 import com.legosoft.facultades.commands.perfil.CreatePerfilCommand;
 import com.legosoft.facultades.commands.perfil.DisablePerfilCommand;
 import com.legosoft.facultades.commands.perfil.UpdatePerfilCommand;
 import com.legosoft.facultades.models.Perfil;
+import com.legosoft.facultades.models.Permiso;
 import com.legosoft.facultades.models.Rol;
 import com.legosoft.facultades.repository.PerfilRepository;
 import com.legosoft.facultades.repository.RolRepository;
 import com.legosoft.facultades.services.PerfilService;
+import com.legosoft.facultades.utils.Response;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -33,12 +38,17 @@ public class PerfilServiceImpl implements PerfilService {
     @Autowired
     private RolRepository rolRepository;
 
+    @Autowired
+    private ConsumerRestCircuitBreaker consumerRestCircuitBreaker;
+
     public PerfilServiceImpl(CommandGateway commandGateway){
         this.commandGateway = commandGateway;
     }
 
     @Override
-    public CompletableFuture<String> savePefil(Perfil perfil) {
+    public ResponseEntity savePefil(Perfil perfil) {
+
+        Map<String, Object> info = new HashMap<>();
 
         Perfil per = perfilRepository.findByNombre(perfil.getNombre());
 
@@ -63,12 +73,34 @@ public class PerfilServiceImpl implements PerfilService {
                     p.getRolesPerfil()
             );
 
-            rabbitTemplate.convertAndSend("facultades","*", new Gson().toJson(command));
-            rabbitTemplate.convertAndSend("ExchangeCQRS","*", new Gson().toJson(perfil));
+            try {
+                rabbitTemplate.convertAndSend("facultades","*", new Gson().toJson(command));
+            }catch (Exception e){
 
-            return commandGateway.send(command);
-        } else {
-            throw new IllegalArgumentException("El nombre del Perfil ya existe");
+                info.put("routingKey", "usuarioCQRS");
+                info.put("exchange", "usuarioCQRS");
+                info.put("body", command);
+                consumerRestCircuitBreaker.consumerRestRabbitService(info);
+
+            }
+
+            try {
+                rabbitTemplate.convertAndSend("ExchangeCQRS","*", new Gson().toJson(perfil));
+            }catch (Exception e){
+
+                info.put("routingKey", "usuarioCQRS");
+                info.put("exchange", "usuarioCQRS");
+                info.put("body", command);
+                consumerRestCircuitBreaker.consumerRestRabbitService(info);
+
+            }
+
+            commandGateway.send(command);
+            return new ResponseEntity(perfil, HttpStatus.OK);
+        }else{
+
+            return new ResponseEntity(new Response(HttpStatus.BAD_REQUEST.value(),"El rol " + perfil.getNombre() + " Ya existe"), HttpStatus.BAD_REQUEST);
+
         }
 
     }

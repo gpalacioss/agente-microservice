@@ -1,6 +1,7 @@
 package com.legosoft.facultades.services;
 
 import com.legosoft.facultades.models.Rol;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -12,7 +13,7 @@ public interface RolService {
      * @param rol
      * @return Rol
      */
-    CompletableFuture<String> saveRol(Rol rol);
+    public ResponseEntity saveRol(Rol rol);
 
     /**
      *

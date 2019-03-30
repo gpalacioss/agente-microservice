@@ -15,12 +15,9 @@ import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.commandhandling.model.AggregateLifecycle;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.spring.stereotype.Aggregate;
-import org.neo4j.ogm.annotation.GeneratedValue;
-import org.neo4j.ogm.annotation.Id;
-import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Relationship;
-import org.neo4j.ogm.annotation.Transient;
 
+
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,11 +26,12 @@ import java.util.Set;
 @Slf4j
 @AllArgsConstructor
 @NoArgsConstructor
-@NodeEntity(label = "Perfil")
+@Entity
+@Table(name = "perfil")
 public class Perfil {
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @AggregateIdentifier
     private Long idPerfil;
 
@@ -47,7 +45,8 @@ public class Perfil {
     @Transient
     private String tipo;
 
-    @Relationship(type = "HAS_ROL")
+
+    @OneToMany(targetEntity = Rol.class, mappedBy = "perfil", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE})
     private Set<Rol> rolesPerfil = new HashSet<>();
 
     @CommandHandler

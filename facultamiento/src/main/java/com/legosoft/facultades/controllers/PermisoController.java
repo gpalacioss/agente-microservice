@@ -9,6 +9,7 @@ import com.legosoft.facultades.utils.Response;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,14 +32,14 @@ public class PermisoController {
      * @return
      */
     @PostMapping("/creaPermiso")
-    public void creaPermiso(@RequestBody PermisoDto request){
+    public ResponseEntity creaPermiso(@RequestBody PermisoDto request){
 
         logger.info("Creando Permiso: {}", request);
 
         Permiso p = new Permiso();
         BeanUtils.copyProperties(request, p);
 
-        permisoService.savePermiso(p);
+        return permisoService.savePermiso(p);
 
     }
 

@@ -9,9 +9,12 @@ import com.legosoft.facultades.models.Rol;
 import com.legosoft.facultades.repository.PermisoRepository;
 import com.legosoft.facultades.repository.RolRepository;
 import com.legosoft.facultades.services.RolService;
+import com.legosoft.facultades.utils.Response;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,25 +43,40 @@ public class RolServiceImpl implements RolService {
     }
 
     @Override
-    public CompletableFuture<String> saveRol(Rol rol) {
+    public ResponseEntity saveRol(Rol rol) {
 
         Set<Permiso> permisos = new HashSet<>();
+        String message = "";
 
-        rol.getPermisos().stream().forEach(p -> {
-            permisos.add(permisoRepository.findById(p.getIdPermiso()).get());
-        });
+        Rol r = rolRepository.findByNombre(rol.getNombre());
 
-        rol.setPermisos(permisos);
-        rol.setTipo(TIPO);
-        rol.setIdRol(null);
+        if (r == null){
 
-        Rol r = rolRepository.save(rol);
+            rol.setIdRol(null);
+            message = "El rol fue actualizado correctamente";
 
-        CreateRolCommand command = new CreateRolCommand(r.getIdRol(),r.getNombre(),r.getActivo(),r.getPermisos());
+            rol.getPermisos().stream().forEach(p -> {
+                permisos.add(permisoRepository.findById(p.getIdPermiso()).get());
+            });
 
-        rabbitTemplate.convertAndSend("ExchangeCQRS","*", new Gson().toJson(r));
+            rol.setPermisos(permisos);
+            rol.setTipo(TIPO);
 
-        return commandGateway.send(command);
+
+            rol = rolRepository.save(rol);
+
+            CreateRolCommand command = new CreateRolCommand(rol.getIdRol(),rol.getNombre(),rol.getActivo(),rol.getPermisos());
+
+            rabbitTemplate.convertAndSend("ExchangeCQRS","*", new Gson().toJson(rol));
+
+            commandGateway.send(command);
+
+            return new ResponseEntity(rol, HttpStatus.OK);
+        }else{
+
+            return new ResponseEntity(new Response(HttpStatus.BAD_REQUEST.value(),"El rol " + rol.getNombre() + " Ya existe"), HttpStatus.BAD_REQUEST);
+
+        }
 
     }
 

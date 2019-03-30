@@ -15,11 +15,8 @@ import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.commandhandling.model.AggregateLifecycle;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.spring.stereotype.Aggregate;
-import org.neo4j.ogm.annotation.GeneratedValue;
-import org.neo4j.ogm.annotation.Id;
-import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Transient;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Data
@@ -27,11 +24,12 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
-@NodeEntity(label = "Permiso")
+@Entity
+@Table(name = "permiso")
 public class Permiso implements Serializable {
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @AggregateIdentifier
     private Long idPermiso;
 
@@ -44,6 +42,10 @@ public class Permiso implements Serializable {
     private Boolean permisoInicioSesion;
 
     private Boolean activo;
+
+    @ManyToOne
+    @JoinColumn(name = "idRol", referencedColumnName = "idRol")
+    private Rol rol;
 
     @Transient
     private String tipo;

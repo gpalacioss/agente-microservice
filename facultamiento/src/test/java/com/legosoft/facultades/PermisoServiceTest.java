@@ -48,9 +48,9 @@ public class PermisoServiceTest {
         permisoService.setPermisoRepository(permisoRepository);
         permisoService.setRabbitTemplate(rabbitTemplate);
 
-        permisoNuevo = new Permiso(null,NOMBRE,PERMISO_ACME,DESCRIPCION,PERMISO_INICIO,ACTIVO,TIPO);
-        permisoGuardado = new Permiso(ID,NOMBRE,PERMISO_ACME,DESCRIPCION,PERMISO_INICIO,ACTIVO,TIPO);
-        permisoActualizado = new Permiso(ID,NOMBRE,PERMISO_ACME,DESC_UPDATE,PERMISO_INICIO,ACTIVO,TIPO);
+//        permisoNuevo = new Permiso(null,NOMBRE,PERMISO_ACME,DESCRIPCION,PERMISO_INICIO,ACTIVO,TIPO);
+//        permisoGuardado = new Permiso(ID,NOMBRE,PERMISO_ACME,DESCRIPCION,PERMISO_INICIO,ACTIVO,TIPO);
+//        permisoActualizado = new Permiso(ID,NOMBRE,PERMISO_ACME,DESC_UPDATE,PERMISO_INICIO,ACTIVO,TIPO);
 
         createPermisoCommand = new CreatePermisoCommand(permisoGuardado.getIdPermiso(),permisoGuardado.getNombre(),permisoGuardado.getPermisoAcme(),
                 permisoGuardado.getDescripcion(),permisoGuardado.getPermisoInicioSesion(),permisoGuardado.getActivo());

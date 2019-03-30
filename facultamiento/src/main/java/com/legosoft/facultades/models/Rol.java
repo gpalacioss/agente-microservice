@@ -14,8 +14,8 @@ import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.commandhandling.model.AggregateLifecycle;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.spring.stereotype.Aggregate;
-import org.neo4j.ogm.annotation.*;
 
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,20 +23,26 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@NodeEntity(label = "Rol")
+@Entity
+@Table(name = "rol")
 public class Rol {
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @AggregateIdentifier
     private Long idRol;
 
     private String nombre;
 
-    @Relationship(type = "HAS_PERMISO")
+
+    @OneToMany(targetEntity = Permiso.class, mappedBy = "rol", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE})
     private Set<Permiso> permisos = new HashSet<>();
 
     private Boolean activo;
+
+    @ManyToOne
+    @JoinColumn(name = "idPerfil", referencedColumnName = "idPerfil")
+    private Perfil perfil;
 
     @Transient
     private String tipo;

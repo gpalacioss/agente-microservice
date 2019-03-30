@@ -7,10 +7,13 @@ import com.legosoft.facultades.commands.permiso.UpdatePermisoCommand;
 import com.legosoft.facultades.models.Permiso;
 import com.legosoft.facultades.repository.PermisoRepository;
 import com.legosoft.facultades.services.PermisoService;
+import com.legosoft.facultades.utils.Response;
 import lombok.Data;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -35,28 +38,23 @@ public class PermisoServiceImpl implements PermisoService {
     }
 
 
-    public CompletableFuture<String> savePermiso(Permiso permiso){
+    public ResponseEntity savePermiso(Permiso permiso){
 
         if (Objects.isNull(permisoRepository.findByNombre(permiso.getNombre()))){
             permiso.setIdPermiso(null);
 
             Permiso per = permisoRepository.save(permiso);
-
             per.setTipo(TIPO_PERMISO);
-
-        CreatePermisoCommand command = new CreatePermisoCommand(per.getIdPermiso(),per.getNombre(), per.getPermisoAcme(),
-                per.getDescripcion(),per.getPermisoInicioSesion(),per.getActivo());
-
+            CreatePermisoCommand command = new CreatePermisoCommand(per.getIdPermiso(),per.getNombre(), per.getPermisoAcme(), per.getDescripcion(),per.getPermisoInicioSesion(),per.getActivo());
             rabbitTemplate.convertAndSend("ExchangeCQRS","*", new Gson().toJson(per));
+            commandGateway.send(command);
 
-            return commandGateway.send(command);
+            return new ResponseEntity(per, HttpStatus.OK);
+        }else{
 
-        } else {
-
-            throw new IllegalArgumentException("El nombre del Permiso ya existe");
+            return new ResponseEntity(new Response(HttpStatus.BAD_REQUEST.value(),"El rol " + permiso.getNombre() + " Ya existe"), HttpStatus.BAD_REQUEST);
 
         }
-
 
     }
 

@@ -27,10 +27,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-neo4j</artifactId>
-		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-eureka-client -->
 		<dependency>
@@ -39,7 +35,11 @@
 			<version>2.1.1.RELEASE</version>
 		</dependency>
 
-
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+			<version>2.1.1.RELEASE</version>
+		</dependency>
 		<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -93,8 +93,8 @@
             <artifactId>axon-amqp</artifactId>
             <version>3.4.2</version>
         </dependency>
-        <!-- Mongo dependency-->
-        <!--<dependency>
+         <!--Mongo dependency-->
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
@@ -102,8 +102,8 @@
             <groupId>org.axonframework</groupId>
             <artifactId>axon-mongo</artifactId>
             <version>3.2</version>
-        </dependency>-->
-        <!-- Mockito dependency-->
+        </dependency>
+         <!--Mockito dependency-->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
